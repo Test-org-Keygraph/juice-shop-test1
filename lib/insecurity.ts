@@ -42,6 +42,7 @@ interface IAuthenticatedUsers {
 
 export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
 export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
+export const secureCookieOptions = { httpOnly: true, secure: true, sameSite: 'strict' as const }
 
 export const cutOffPoisonNullByte = (str: string) => {
   const nullByte = '%00'
@@ -192,7 +193,7 @@ export const updateAuthenticatedUsers = () => (req: Request, res: Response, next
       if (err === null) {
         if (authenticatedUsers.get(token) === undefined) {
           authenticatedUsers.put(token, decoded)
-          res.cookie('token', token)
+          res.cookie('token', token, secureCookieOptions)
         }
       }
     })
